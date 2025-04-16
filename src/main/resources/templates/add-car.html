@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/main.html}">
+<div layout:fragment="mainFragment">
+    <div class="col-6 offset-3 pt-4 mt-5">
+        <form class="card px-3 py-3 mt-2" method="post" th:action="@{'/addcar'}">
+            <h2 class="text-center mb-3">Add Car</h2>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="car_name" placeholder="car_name" name="car_name" required>
+                <label for="car_name">Name (Brand)</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="car_model" placeholder="car_model" name="car_model" required>
+                <label for="car_model">Model</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="car_year" placeholder="car_year" name="car_year" required>
+                <label for="car_year">Year of manufacture</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="car_price" placeholder="car_price" name="car_price" required>
+                <label for="car_price">Price</label>
+            </div>
+            <div class="d-grid gap-2 col-4 mx-auto">
+                <button class="btn btn-success" type="submit">SAVE</button>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/main.html}">
+<div layout:fragment="mainFragment">
+    <div class="ms-2">
+        <h2>
+            <span th:text="${car.name}"></span> <span th:text="${car.model}"></span>
+        </h2>
+        <p>
+
+        </p>
+        <p class="text-muted">
+            Costs <span th:text="${car.price}"></span> USD
+        </p>
+        <p>
+            Manufactured in <span th:text="${car.year}"></span> year
+        </p>
+
+        <div class="d-flex">
+            <!-- Кнопка для редактирования данных машин. Нажав на нее, мы перейдем на страницу редактирования данных машины -->
+            <a class="btn btn-primary me-3" th:href="@{'/updatecar?id=' + ${car.id}}">EDIT</a>
+
+            <!-- Кнопка для удаления машины (о ней поговорим чуть позже) -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteCarModal">
+                DELETE
+            </button>
+        </div>
+
+        <div class="modal fade" id="confirmDeleteCarModal" tabindex="-1" aria-labelledby="confirmDeleteCarModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="post" th:action="@{'/deletecar?id=' + ${car.id}}">
+
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="confirmDeleteCarModalLabel">Confirm car deletion</h1>
+
+                            <!-- Эта кнопка закрывает всплывающее (модальное) окно, а также отменяет запрос на удаление -->
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure to delete car <span th:text="${car.name}"></span> <span th:text="${car.model}"></span>?
+                        </div>
+                        <div class="modal-footer">
+                            <!-- Эта кнопка отменяет запрос на удаление -->
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">NO</button>
+                            <!-- Эта кнопка подтверждает запрос на удаление -->
+                            <button type="submit" class="btn btn-danger">YES</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Пользователь будет перенаправлен на данную страницу детального просмотра данных машины после успешного обновления ее данных -->
+        <!-- Это сообщение появится в случае успешного обновления данных машины -->
+        <div class="alert alert-success mb-4 mt-3" th:if="${param.success != null}">
+            Information about this car has successfully been updated!
+        </div>
+    </div>
+</div>
+</html>
