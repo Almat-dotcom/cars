@@ -13,6 +13,7 @@
                 <th>Model</th>
                 <th>Year of manufacture</th>
                 <th>Price</th>
+                <th>Country</th>
                 <th>View</th>
             </tr>
             </thead>
@@ -23,6 +24,12 @@
                 <td class="pt-3" th:text="${car.model}"></td>
                 <td class="pt-3" th:text="${car.year}"></td>
                 <td class="pt-3" th:text="${car.price}"></td>
+                <td class="pt-3">
+                    <!-- Страна-производитель будет отображена в данной ячейке таблицы, если она присутствует (в базе данных в таблице cars в столбце country_id присутствует значение) -->
+                    <span th:if="${car.country != null}" th:text="${car.country.name + '/' + car.country.code}"></span>
+                    <!-- Если страна-производитель отсутствует, то в данной ячейке таблицы будет отобраено UNKNOWN -->
+                    <i th:unless="${car.country != null}" class="text-secondary">UNKNOWN</i>
+                </td>
                 <td>
                     <!-- Ссылка на страницу детального просмотра машины (О ней расскажу чуть позже) -->
                     <a class="btn btn-primary" th:href="@{'/car?id=' + ${car.id}}">View</a>

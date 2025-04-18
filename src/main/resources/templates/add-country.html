@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/main.html}">
+<div layout:fragment="mainFragment">
+    <div class="col-6 offset-3 mt-5 pt-4">
+        <form class="card px-3 py-3 mt-5" method="post" th:action="@{'/addcountry'}">
+            <h2 class="text-center mb-3">Add Country</h2>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="country_name" placeholder="country_name" name="name" required>
+                <label for="country_name">Name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <!-- Поскольку в таблице countries столбец code имеет ограничение по длине в 3 символа, то и в форме для ввода данных в поле code также установим ограничение длины в 3 символа -->
+                <input type="text" maxlength="3" class="form-control" id="country_code" placeholder="country_code" name="code" required>
+                <label for="country_code">Code</label>
+            </div>
+            <div class="d-grid gap-2 col-4 mx-auto">
+                <button class="btn btn-success" type="submit">SAVE</button>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

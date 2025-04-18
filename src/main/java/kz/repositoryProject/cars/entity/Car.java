@@ -30,4 +30,8 @@ public class Car {
 
     @Column(name = "engine_volume")
     private double engineVolume;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    private Country country;
 }

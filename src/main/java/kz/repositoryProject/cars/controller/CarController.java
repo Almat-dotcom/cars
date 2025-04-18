@@ -1,8 +1,10 @@
 package kz.repositoryProject.cars.controller;
 
 import kz.repositoryProject.cars.entity.Car;
+import kz.repositoryProject.cars.entity.Country;
 import kz.repositoryProject.cars.repository.CarRepository;
 import kz.repositoryProject.cars.service.CarService;
+import kz.repositoryProject.cars.service.CountryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class CarController {
     private final CarService carService;
+    private final CountryService countryService;
 
     @GetMapping(value = "/addcar")
-    public String addCarPage() {
+    public String addCarPage(Model model) {
+        model.addAttribute("countries", countryService.getAll());
         return "add-car";
     }
 
@@ -24,13 +28,16 @@ public class CarController {
     public String addCar(@RequestParam(name = "car_name") String name,
                          @RequestParam(name = "car_model") String model,
                          @RequestParam(name = "car_year") int year,
-                         @RequestParam(name = "car_price") int price) {
+                         @RequestParam(name = "car_price") int price,
+                         @RequestParam(name = "country_id") Long countryId) {
 
+        Country country = countryService.getById(countryId);
         Car car = new Car();
         car.setName(name);
         car.setModel(model);
         car.setYear(year);
         car.setPrice(price);
+        car.setCountry(country);
         carService.addCar(car);
         return "redirect:/";  // После успешного добавления в машины в базу даннных пользователь будет перенаправлен на главную страницу (о ней чуть позже рааскажу)
     }
@@ -62,6 +69,7 @@ public class CarController {
         Car car = carService.getCarById(id);
         if (car != null) {
             model.addAttribute("car", car);
+            model.addAttribute("countries", countryService.getAll());
             return "edit-car";
         } else {
             return "redirect:/404";
@@ -69,23 +77,14 @@ public class CarController {
     }
 
     @PostMapping(value = "/updatecar")
-    public String updateCar(@RequestParam(name = "car_id") Long id,
-                            @RequestParam(name = "car_name") String name,
-                            @RequestParam(name = "car_model") String model,
-                            @RequestParam(name = "car_year") int year,
-                            @RequestParam(name = "car_price") int price) {
-        Car car = carService.getCarById(id);
+    public String updateCar(Car car) {
 
         if (car != null) {
-            car.setName(name);
-            car.setModel(model);
-            car.setYear(year);
-            car.setPrice(price);
             carService.updateCar(car);
 
             // После успешного сохранения изменений пользователь будет перенаправлен на страницу детального просмотра данных машины
             // Передаем дополнительный параметр success, чтобы на странице детального просмотра данных машины отобразилось сообщение об успешном обновлении данных
-            return "redirect:/car?id=" + id + "&success";
+            return "redirect:/car?id=" + car.getId() + "&success";
         } else {
             // Будет перенаправление на страницу ошибки 404, если машина не будет найдена в базе данных (например, в параметр запроса было передано ошибочное значение идентификатора)
             return "redirect:/404";

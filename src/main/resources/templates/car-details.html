@@ -14,6 +14,10 @@
         <p>
             Manufactured in <span th:text="${car.year}"></span> year
         </p>
+        <p>
+            Manufactured in <span th:text="${car.country.name}"></span> country
+        </p>
+
 
         <div class="d-flex">
             <!-- Кнопка для редактирования данных машин. Нажав на нее, мы перейдем на страницу редактирования данных машины -->
