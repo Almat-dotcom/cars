@@ -59,6 +59,33 @@
         <div class="alert alert-success mb-4 mt-3" th:if="${param.success != null}">
             Information about this car has successfully been updated!
         </div>
+
+        <h3 class="mt-5 mb-3">Assigned categories:</h3>
+        <div class="d-flex">
+            <div class="card me-3" th:each="category : ${car.categories}">
+                <!-- Эта форма удаляет категорию у машины -->
+                <form class="d-flex px-2 py-2" method="post" th:action="@{'/unassigncategory'}">
+                    <button type="submit" class="btn btn-danger me-2">-</button>
+                    <input type="hidden" name="category_id" th:value="${category.id}">
+                    <input type="hidden" name="car_id" th:value="${car.id}">
+                    <span class="mt-2" th:text="${category.name}"></span>
+                </form>
+            </div>
+        </div>
+
+
+        <h3 class="mt-5 mb-3">Available categories:</h3>
+        <div class="d-flex">
+            <div class="card me-3" th:each="category : ${categories}">
+                <!-- Эта форма назначает машине категорию -->
+                <form class="d-flex px-2 py-2" method="post" th:action="@{'/assigncategory'}">
+                    <button type="submit" class="btn btn-success me-2">+</button>
+                    <input type="hidden" name="category_id" th:value="${category.id}">
+                    <input type="hidden" name="car_id" th:value="${car.id}">
+                    <span class="mt-2" th:text="${category.name}"></span>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 </html>

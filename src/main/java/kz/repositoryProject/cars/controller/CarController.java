@@ -1,9 +1,11 @@
 package kz.repositoryProject.cars.controller;
 
 import kz.repositoryProject.cars.entity.Car;
+import kz.repositoryProject.cars.entity.Category;
 import kz.repositoryProject.cars.entity.Country;
 import kz.repositoryProject.cars.repository.CarRepository;
 import kz.repositoryProject.cars.service.CarService;
+import kz.repositoryProject.cars.service.CategoryService;
 import kz.repositoryProject.cars.service.CountryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,11 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class CarController {
     private final CarService carService;
     private final CountryService countryService;
+    private final CategoryService categoryService;
 
     @GetMapping(value = "/addcar")
     public String addCarPage(Model model) {
@@ -52,7 +58,9 @@ public class CarController {
     public String getCar(@RequestParam(value = "id") Long id, Model model) {
         Car car = carService.getCarById(id);
         if (car != null) {
+            var categories = categoryService.getNotAssignedCategories(car);
             model.addAttribute("car", car);
+            model.addAttribute("categories", categories);
             return "car-details";
         } else {
             return "redirect:/404";
@@ -106,5 +114,19 @@ public class CarController {
             model.addAttribute("cars", carService.findByName(name));
         }
         return "cars";
+    }
+
+    @PostMapping("/assigncategory")
+    public String assignCategory(@RequestParam(name = "category_id") Long categoryId,
+                                 @RequestParam(name = "car_id") Long carId) {
+        carService.assignCategory(carId, categoryId);
+        return "redirect:/car?id=" + carId;
+    }
+
+    @PostMapping("/unassigncategory")
+    public String unAssignCategory(@RequestParam(name = "category_id") Long categoryId,
+                                 @RequestParam(name = "car_id") Long carId) {
+        carService.unAssignCategory(carId, categoryId);
+        return "redirect:/car?id=" + carId;
     }
 }
