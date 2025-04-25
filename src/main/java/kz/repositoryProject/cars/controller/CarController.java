@@ -1,21 +1,23 @@
 package kz.repositoryProject.cars.controller;
 
 import kz.repositoryProject.cars.entity.Car;
-import kz.repositoryProject.cars.entity.Category;
 import kz.repositoryProject.cars.entity.Country;
-import kz.repositoryProject.cars.repository.CarRepository;
 import kz.repositoryProject.cars.service.CarService;
 import kz.repositoryProject.cars.service.CategoryService;
 import kz.repositoryProject.cars.service.CountryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,8 +51,18 @@ public class CarController {
     }
 
     @GetMapping(value = "/")
-    public String cars(Model model) {
-        model.addAttribute("cars", carService.getCars());
+    public String cars(Model model,
+                       @RequestParam(name = "min_year", required = false) Integer year,
+                       @RequestParam(name = "car_name", required = false) String name,
+                       @RequestParam(name = "max_price", required = false) Integer maxPrice,
+                       @RequestParam(name = "country_id", required = false) Long countryId,
+                       @RequestParam(name = "category_id", required = false) Long categoryId
+                       ) {
+        model.addAttribute("countries", countryService.getAll());
+        model.addAttribute("categories", categoryService.getAll());
+        List<Car> carsPage=carService.findByCriterias(year, name,maxPrice,countryId, categoryId);
+        model.addAttribute("cars", carsPage);
+
         return "cars";
     }
 
@@ -125,7 +137,7 @@ public class CarController {
 
     @PostMapping("/unassigncategory")
     public String unAssignCategory(@RequestParam(name = "category_id") Long categoryId,
-                                 @RequestParam(name = "car_id") Long carId) {
+                                   @RequestParam(name = "car_id") Long carId) {
         carService.unAssignCategory(carId, categoryId);
         return "redirect:/car?id=" + carId;
     }

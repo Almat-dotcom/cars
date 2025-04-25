@@ -2,6 +2,46 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/main.html}">
 <div layout:fragment="mainFragment">
 
+    <div class="card px-3 py-3 my-3 ms-2">
+
+        <h4>Find cars by:</h4>
+
+        <!-- форма для поиска (фильтра) машин по году производства -->
+        <form method="get" class="d-flex" th:action="@{'/'}">
+            <div class="form-floating me-3">
+                <input type="text" class="form-control" id="car_name" name="car_name" placeholder="car_name" th:value="${param.car_name}">
+                <label for="car_name">Name (Brand)</label>
+            </div>
+            <div class="form-floating me-3">
+                <input type="number" class="form-control" id="min_year" name="min_year" placeholder="min_year" th:value="${param.min_year}">
+                <label for="min_year">Minimal year of manufacture</label>
+            </div>
+            <div class="form-floating me-3">
+                <input type="number" class="form-control" id="max_price" name="max_price" placeholder="max_price" th:value="${param.max_price}">
+                <label for="max_price">Maximal price</label>
+            </div>
+            <div class="form-floating me-3">
+                <!-- Выборка. С ее помощью можно выбрать критерий поиска – страна-производитель -->
+                <select class="form-select" id="country_id" aria-label="country_id" name="country_id">
+                    <!-- Опция Any представляет любую страну-производителя (пользователь не выбирает конкретную страну-производителя в качестве критерия для поиска машин) -->
+                    <option th:value="null">Any</option>
+                    <option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name + ' / ' + country.code}" th:selected="${chosenCountryId != null && chosenCountryId.equals(country.id)}"></option>
+                </select>
+                <label for="country_id">Manufacturer</label>
+            </div>
+            <div class="form-floating me-3">
+                <!-- Выборка. С ее помощью можно выбрать критерий поиска – категория машины -->
+                <select class="form-select" id="category_id" aria-label="category_id" name="category_id">
+                    <!-- Опция Any представляет любую категорию (пользователь не выбирает конкретную категорию в качестве критерия для поиска машин) -->
+                    <option th:value="null">Any</option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${chosenCategoryId != null && chosenCategoryId.equals(category.id)}"></option>
+                </select>
+                <label for="category_id">Category</label>
+            </div>
+            <button type="submit" class="btn btn-success" style="height: 43.5pt;"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
     <h2 class="mb-4 ms-2">All Cars</h2>
 
     <div class="ms-2 me-2">
@@ -39,4 +79,5 @@
         </table>
     </div>
 </div>
+
 </html>
