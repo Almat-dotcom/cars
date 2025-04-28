@@ -10,6 +10,8 @@ import kz.repositoryProject.cars.repository.CarRepository;
 import kz.repositoryProject.cars.repository.custom.CustomCarRepository;
 import kz.repositoryProject.cars.util.CarSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -36,29 +38,8 @@ public class CarService {
         return carRepository.findById(id).orElse(null);
     }
 
-    public List<Car> findByCriterias(Integer year, String name, Integer maxPrice, Long countryId, Long categoryId) {
-        List<Car> cars = new ArrayList<>();
-//        if (year != null && name != null) {
-//            cars = carRepository.findAllByYearAndName(year, name);
-//        } else if (year != null) {
-//            cars = carRepository.findAllByYear(year);
-//        } else if (name != null) {
-//            cars = carRepository.findAllByName(name);
-//        } else {
-//            cars = carRepository.findAll();
-//        }
-//        if (year == null && (name == null || name.isEmpty())) {
-//            return carRepository.findAll();
-//        } else if (year == null) {
-//            return carRepository.findAllByName(name);
-//        } else if (name == null || name.isEmpty()) {
-//            return carRepository.findAllByYear(year);
-//        } else {
-//            return carRepository.findAllByYearAndName(year, name);
-//        }
-//        return customCarRepository.findAllByCriteria(year, name,maxPrice, countryId, categoryId);
-//        return carRepository.findAllBySearch(year, name);
-        return carRepository.findAll(CarSpecification.getCarSpecification(year, name, maxPrice, countryId, categoryId));
+    public Page<Car> findByCriterias(Integer year, String name, Integer maxPrice, Long countryId, Long categoryId, Pageable pageable) {
+        return carRepository.findAll(CarSpecification.getCarSpecification(year, name, maxPrice, countryId, categoryId), pageable);
     }
 
     public void updateCar(Car car) {

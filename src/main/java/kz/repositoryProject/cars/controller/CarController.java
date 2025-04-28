@@ -7,6 +7,7 @@ import kz.repositoryProject.cars.service.CategoryService;
 import kz.repositoryProject.cars.service.CountryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -56,12 +57,41 @@ public class CarController {
                        @RequestParam(name = "car_name", required = false) String name,
                        @RequestParam(name = "max_price", required = false) Integer maxPrice,
                        @RequestParam(name = "country_id", required = false) Long countryId,
-                       @RequestParam(name = "category_id", required = false) Long categoryId
-                       ) {
-        model.addAttribute("countries", countryService.getAll());
-        model.addAttribute("categories", categoryService.getAll());
-        List<Car> carsPage=carService.findByCriterias(year, name,maxPrice,countryId, categoryId);
-        model.addAttribute("cars", carsPage);
+                       @RequestParam(name = "category_id", required = false) Long categoryId,
+                       @RequestParam(name = "sort_order", required = false) String orderBy,
+                       @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC)
+                       Pageable pageable) {
+
+        Pageable pageable1 = null;
+        if (orderBy != null) {
+            if (orderBy.equals("asc") || orderBy.equals("ASC")) {
+                pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(pageable.getSort().iterator().next().getProperty()).ascending());
+            } else {
+                pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(pageable.getSort().iterator().next().getProperty()).descending());
+            }
+        }
+        //Pageable
+        //Page (сама данная, сколько страниц, текущая страница)
+        Page<Car> carsPage = null;
+        if (pageable1 != null) {
+            carsPage = carService.findByCriterias(year, name, maxPrice, countryId, categoryId, pageable1);
+        } else {
+            carsPage = carService.findByCriterias(year, name, maxPrice, countryId, categoryId, pageable);
+        }
+        model.addAttribute("cars", carsPage.getContent());
+        model.addAttribute("currentPage", carsPage.getNumber());
+        model.addAttribute("pageSize", carsPage.getSize());
+
+        model.addAttribute("totalPages", carsPage.getTotalPages());
+        List<Integer> pages = IntStream.range(0, carsPage.getTotalPages()).boxed().toList();
+        // getTotalPages=4 IntStream(0,14).box.toList List<0,1,2,3,4,5,6,7,8,9,10,11,12,13>
+        model.addAttribute("pageNumbers", pages);
+        Sort sortDetails = pageable.getSort();
+        String sortBy = sortDetails.iterator().next().getProperty();  // Имя поля для сортировки
+        String sortOrder = sortDetails.iterator().next().getDirection().name();  // Порядок сортировки (ASC или DESC)
+
+        model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("sortBy", sortBy);
 
         return "cars";
     }

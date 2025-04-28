@@ -17,7 +17,7 @@ import java.util.List;
 public interface CarRepository extends JpaRepository<Car, Long> {
     List<Car> findAllByNameContainingIgnoreCase(String name);
 
-    List<Car> findAll(Specification<Car> specification);
+    Page<Car> findAll(Specification<Car> specification, Pageable pageable);
 
     @Query(value = "SELECT * FROM cars c WHERE c.year=:year AND c.name LIKE CONCAT('%', :name, '%')", nativeQuery = true)
     List<Car> findAllBySearch(@RequestParam(name = "year") Integer year, @RequestParam(name = "name") String name);
